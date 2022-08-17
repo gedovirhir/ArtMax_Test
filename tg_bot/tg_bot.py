@@ -208,11 +208,15 @@ async def mail_allow_exec(message: Message, state: FSMContext):
 async def request_handler(message: Message, state: FSMContext):
     db_user = User.get(user_tg_id=message.from_user.id).first() 
     stat = Status.get(name='mail_allowed').first()
-    if not db_user: await message.answer('Вы не зарегистрированы в боте, для регистрации вызовите /start.')
+    req = Request.get(user_id=db_user.id, status_id=stat.id, is_active=True).first()
     
-    elif stat.name in db_user.get_status(): await message.answer('У вас уже есть доступ к рассылке')
+    if req: await message.answer('Ваша заявка ожидает одобрения администратора.')
     
-    else: 
+    elif not db_user: await message.answer('Вы не зарегистрированы в боте, для регистрации вызовите /start.')
+    
+    elif stat.name in db_user.get_status(): await message.answer('У вас уже есть доступ к рассылке', reply_markup=i_)
+    
+    else:
         Request.add(user_id=db_user.id, status_id=stat.id)
         await message.answer('Ваша заявка отправлена, ждите одобрения администратора.')
 @_dp.message_handler(content_types=['text'], text='Получить данные')

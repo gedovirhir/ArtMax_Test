@@ -42,7 +42,7 @@ def generate_report():
     mesg = []
     for r in new_reviews:
         mesg.append(f'Ссылка: {r.url}\nАвтор: {r.user}\nДата: {r.date_created}\nРейтинг: {r.rating}\nТекст:\n{r.text}\n\n')
-        
+    if not mesg: mesg = ['Нет.']
     return (header, mesg)
 
 def send_new_reviews_mail():

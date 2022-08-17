@@ -24,7 +24,7 @@ def _add_base_info():
 
 def create_user_status_trigger(Session : Session = session()):
     trigger = """
-    CREATE FUNCTION check_active()
+    CREATE FUNCTION check_active_user_status()
 	RETURNS trigger
 	AS 
 	$func$
@@ -39,6 +39,18 @@ def create_user_status_trigger(Session : Session = session()):
     CREATE TRIGGER user_status_INSERT 
     	BEFORE INSERT ON user_status
     	FOR EACH ROW EXECUTE FUNCTION check_active();
+     
+    CREATE FUNCTION check_active_requests()
+	RETURNS trigger
+	AS 
+	$func$
+	BEGIN
+		IF (SELECT 1 FROM requests AS r WHERE r.user_id = NEW.user_id AND r.status_id = NEW.status_id AND r.is_active = TRUE) THEN 
+			RAISE EXCEPTION 'This request already exist and active.';
+		END IF;
+		RETURN NEW;
+	END;
+	$func$ LANGUAGE plpgsql;
     CREATE TRIGGER request_INSERT 
     	BEFORE INSERT ON requests
     	FOR EACH ROW EXECUTE FUNCTION check_active();
