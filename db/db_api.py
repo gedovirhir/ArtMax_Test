@@ -35,10 +35,9 @@ def create_user_status_trigger(Session : Session = session()):
 		RETURN NEW;
 	END;
 	$func$ LANGUAGE plpgsql;
-	
     CREATE TRIGGER user_status_INSERT 
     	BEFORE INSERT ON user_status
-    	FOR EACH ROW EXECUTE FUNCTION check_active();
+    	FOR EACH ROW EXECUTE FUNCTION check_active_user_status();
      
     CREATE FUNCTION check_active_requests()
 	RETURNS trigger
@@ -53,7 +52,7 @@ def create_user_status_trigger(Session : Session = session()):
 	$func$ LANGUAGE plpgsql;
     CREATE TRIGGER request_INSERT 
     	BEFORE INSERT ON requests
-    	FOR EACH ROW EXECUTE FUNCTION check_active();
+    	FOR EACH ROW EXECUTE FUNCTION check_active_requests();
     """
     Session.execute(trigger)
     Session.commit()
