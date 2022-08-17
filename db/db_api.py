@@ -65,15 +65,7 @@ def create_database_if_not_exist():
         
 
 if __name__ == "__main__":
-    """create_database_if_not_exist()
-    
-    User.add(user_tg_id=486325851, username='gedovirhir')
-    User.add(user_tg_id=123123, username='user1')
-
-    user_status.add(user_id=1, status_id=1)
-    user_status.add(user_id=1, status_id=2)
-    
-    user_status.add(user_id=2, status_id=3)"""
+    create_database_if_not_exist()
     
     
     
