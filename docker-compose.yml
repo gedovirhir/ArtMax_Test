@@ -1,0 +1,67 @@
+version: "3.7"
+
+services:
+
+  database:
+    # Official Postgres image from DockerHub (we use the last version)
+    image: "postgres:latest"
+
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}" 
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST: "${POSTGRES_HOST}"
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+    volumes:
+      # In this example, we share the folder `db-data` in our root repository, with the default PostgreSQL data path.
+      # It means that every time the repository is modifying the data inside
+      # of `/var/lib/postgresql/data/`, automatically the change will appear in `db-data`.
+      # You don't need to create the `db-data` folder. Docker Compose will do it for you.
+      - ./db-data/:/var/lib/postgresql/data/
+    
+    restart: always
+
+  script:
+
+    build: 
+      context: .
+      dockerfile: script.dockerfile
+    
+    environment:
+      TOKEN: "${TOKEN}"
+      POSTGRES_DB: "${POSTGRES_DB}" 
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST: "${POSTGRES_HOST}"
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+
+    command: python /app/monitoring_script.py
+
+    volumes:
+      - /etc/localtime:/etc/localtime
+    
+    depends_on:
+      - database
+  
+  tg_bot:
+
+    build: 
+      context: .
+      dockerfile: tg_bot.dockerfile
+    
+    environment:
+      TOKEN: "${TOKEN}"
+      ADMIN: "${ADMIN}"
+      POSTGRES_DB: "${POSTGRES_DB}" 
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST: "${POSTGRES_HOST}"
+      POSTGRES_PORT: "${POSTGRES_PORT}"
+
+    command: python /app/tg_bot/tg_bot.py
+
+    restart: always
+
+    depends_on:
+      - database
+  

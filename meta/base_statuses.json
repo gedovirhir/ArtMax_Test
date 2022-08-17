@@ -1,0 +1,14 @@
+[
+    {
+        "name" : "admin",
+        "description" : "Admistrator promotion" 
+    },
+    {
+        "name" : "mail_allowed",
+        "description" : "Access to the mailing"
+    },
+    {
+        "name" : "banned",
+        "description" : "User banned"
+    }
+]
